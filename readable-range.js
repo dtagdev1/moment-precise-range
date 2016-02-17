@@ -1,27 +1,11 @@
 (function(moment) {
-    var STRINGS = {
-        nodiff: '',
-        year: 'year',
-        years: 'years',
-        month: 'month',
-        months: 'months',
-        day: 'day',
-        days: 'days',
-        hour: 'hour',
-        hours: 'hours',
-        minute: 'minute',
-        minutes: 'minutes',
-        second: 'second',
-        seconds: 'seconds',
-        delimiter: ' '
-    };
     moment.fn.preciseDiff = function(d2) {
         return moment.preciseDiff(this, d2);
     };
     moment.preciseDiff = function(d1, d2) {
         var m1 = moment(d1), m2 = moment(d2);
         if (m1.isSame(m2)) {
-            return STRINGS.nodiff;
+            return '';
         }
         if (m1.isAfter(m2)) {
             var tmp = m1;
@@ -50,7 +34,7 @@
         }
         if (dDiff < 0) {
             var daysInLastFullMonth = moment(m2.year() + '-' + (m2.month() + 1), "YYYY-MM").subtract(1, 'M').daysInMonth();
-            if (daysInLastFullMonth < m1.date()) { // 31/01 -> 2/03
+            if (daysInLastFullMonth < m1.date()) {
                 dDiff = daysInLastFullMonth + dDiff + (m1.date() - daysInLastFullMonth);
             } else {
                 dDiff = daysInLastFullMonth + dDiff;
@@ -62,30 +46,13 @@
             yDiff--;
         }
 
-        function pluralize(num, word) {
-            return num + ' ' + STRINGS[word + (num === 1 ? '' : 's')];
-        }
-        var result = [];
-
-        if (yDiff) {
-            result.push(pluralize(yDiff, 'year'));
-        }
-        if (mDiff) {
-            result.push(pluralize(mDiff, 'month'));
-        }
-        if (dDiff) {
-            result.push(pluralize(dDiff, 'day'));
-        }
-        if (hourDiff) {
-            result.push(pluralize(hourDiff, 'hour'));
-        }
-        if (minDiff) {
-            result.push(pluralize(minDiff, 'minute'));
-        }
-        if (secDiff) {
-            result.push(pluralize(secDiff, 'second'));
-        }
-
-        return result.join(STRINGS.delimiter);
+        return {
+            year: yDiff || 0,
+            month: mDiff || 0,
+            day: dDiff || 0,
+            hour: hourDiff || 0,
+            minute: minDiff || 0,
+            second: secDiff || 0
+        };
     };
 }(moment));
